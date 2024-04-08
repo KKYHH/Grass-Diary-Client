@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCallback, useEffect, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
+import { useMain } from '@recoil/main/useMain';
 import { isAuthenticatedAtom, isLodingAtom } from '@recoil/auth/authState';
 
 import API from '@services';
@@ -391,11 +392,21 @@ const TopSection = () => {
   );
 };
 
+// const [rewardPoint, setRewardPoint] = useState(null);
+// const [grassCount, setGrassCount] = useState(null);
+// const [grassColor, setGrassColor] = useState(null);
+// const [grassList, setGrassList] = useState([]);
+
 const MiddleSection = () => {
-  const [rewardPoint, setRewardPoint] = useState(null);
-  const [grassCount, setGrassCount] = useState(null);
-  const [grassColor, setGrassColor] = useState(null);
-  const [grassList, setGrassList] = useState([]);
+  const {
+    rewardPoint,
+    setRewardPoint,
+    grassCount,
+    grassColor,
+    grassList,
+    fetchReward,
+  } = useMain();
+  const { memberId } = useUser();
 
   const currentDate = dayjs();
   const currentMonth = currentDate.format('M');
@@ -403,8 +414,6 @@ const MiddleSection = () => {
 
   const nextMonthFirstDay = currentDate.add(1, 'month').startOf('month');
   const currentMonthLastDay = nextMonthFirstDay.subtract(1, 'day');
-
-  const { memberId } = useUser();
 
   useEffect(() => {
     if (memberId) {
@@ -416,15 +425,15 @@ const MiddleSection = () => {
           console.error(`사용자의 리워드 정보를 불러올 수 없습니다. ${error}`);
         });
     }
-  }, [memberId]);
+  }, [memberId, setRewardPoint]);
 
   useEffect(() => {
     if (memberId) {
       API.get(`/main/grass/${memberId}`)
         .then(response => {
-          setGrassCount(response.data.count);
-          setGrassColor(response.data.grassInfoDTO.colorRGB);
-          setGrassList(response.data.grassInfoDTO.grassList);
+          grassCount(response.data.count);
+          grassColor(response.data.grassInfoDTO.colorRGB);
+          grassList(response.data.grassInfoDTO.grassList);
         })
         .catch(error => {
           console.log('Error', error);
