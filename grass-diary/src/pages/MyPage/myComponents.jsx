@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 import Grass from './Grass';
 import Diary from './Diary';
-import useProfile from '@hooks/useProfile';
+import useProfile from '@recoil/profile/useProfile';
 import mainCharacter from '@icon/mainCharacter.png';
 import { Button, EllipsisBox, EllipsisIcon, Profile } from '@components';
 
@@ -88,7 +88,7 @@ const ToggleButton = ({ buttonLabel, handleToggleButton }) => {
 };
 
 const ProfileSection = ({ setSelectedDiary }) => {
-  const { nickname, profileIntro } = useProfile();
+  const { nickName, profileIntro } = useProfile();
 
   const modal = () => {
     Swal.fire({
@@ -111,9 +111,11 @@ const ProfileSection = ({ setSelectedDiary }) => {
           <Button
             text="교환 일기 신청"
             width="150px"
-            color="#000"
-            backgroundColor="#FFFFFF"
-            border="2px solid #929292"
+            defaultColor="#2d2d2d"
+            hoverColor="#FFF"
+            defaultBgColor="#FFFFFF"
+            hoverBgColor="#111111"
+            border="1px solid #929292"
             marginTop="25px"
             onClick={modal}
           />
@@ -121,11 +123,11 @@ const ProfileSection = ({ setSelectedDiary }) => {
       </div>
       <div {...stylex.props(styles.profileRight)}>
         <div {...stylex.props(styles.nameSection)}>
-          <span>{nickname}</span>
+          <span>{nickName}</span>
         </div>
         <Grass setSelectedDiary={setSelectedDiary} />
         <div>
-          <span>{profileIntro !== null ? profileIntro : '소개글입니다.'}</span>
+          <span>{profileIntro !== '' ? profileIntro : '소개글입니다.'}</span>
         </div>
       </div>
     </div>
